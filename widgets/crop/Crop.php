@@ -14,6 +14,7 @@ class Crop extends Widget
     public $modalLabel;
     public $inputLabel = 'Choose';
     public $cropLabel = 'Done';
+    public $photoId = 'crop-picture';
 
     /**
      * @inheritdoc

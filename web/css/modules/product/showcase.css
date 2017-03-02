@@ -1,0 +1,16 @@
+.row {
+    height: 0px;
+}
+
+#wrapper-header {
+    margin-bottom: 10px;
+}
+
+.pagination {
+    clear: both;
+    display: block;
+}
+
+.row-categories {
+  display: block;
+}

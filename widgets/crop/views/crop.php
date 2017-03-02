@@ -8,7 +8,7 @@
 
     <!-- Current avatar -->
     <div class="avatar-view" title="Change the avatar">
-        <img src="<?= $widget->noPhotoUrl; ?>" id="user-avatar" alt="Avatar">
+        <img src="<?= $widget->noPhotoUrl; ?>" id=<?=$widget->photoId; ?> alt="Avatar">
     </div>
 
     <!-- Cropping modal -->

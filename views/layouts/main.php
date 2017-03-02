@@ -56,6 +56,9 @@ AppAsset::register($this);
                     ['label' => 'Static Pages', 'url' => ['/static-pages']],
                     ['label' => 'Options', 'url' => ['/options']],
                     ['label' => 'Feedbacks', 'url' => ['/feedback']],
+                    ['label' => 'Products', 'url' => ['/products']],
+                    ['label' => 'Info', 'url' => ['/info']],
+                    ['label' => 'Showcase', 'url' => ['/showcase']],
                 ],
             ];
         }
