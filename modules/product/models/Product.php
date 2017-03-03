@@ -74,7 +74,7 @@ class Product extends ActiveRecord
      * @inheritdoc
      * @return \yii\db\ActiveQuery the newly created [[ActiveQuery]] instance.
      */
-    public static function getProductCategoriesQuery()
+    public static function getProductCategoriesQuery($searchParams = [])
     {
         $query = Product::find();
 
@@ -83,6 +83,12 @@ class Product extends ActiveRecord
             ->from('products')
             ->leftJoin('products_to_categories', 'products.id = products_to_categories.product_id')
             ->leftJoin('categories', 'products_to_categories.category_id = categories.id');
+
+        if(count($searchParams)) {
+            $filterParams = $searchParams['items'];
+            $query->where(['like', $searchParams['search_key'] ,$searchParams['search_value']])
+                ->andWhere(['categories.id' => $filterParams]);
+        }
 
         return $query;
     }
@@ -110,10 +116,9 @@ class Product extends ActiveRecord
     {
         $modelProductsStorages = ProductsStorages::find()->where(["product_id" => $id])->all();
 
-        if(!empty($modelProductsStorages)){
+        if(!empty($modelProductsStorages)) {
             $count = 0;
-            foreach ($modelProductsStorages as $value)
-            {
+            foreach ($modelProductsStorages as $value) {
                 $count += $value->count_product;
             }
             return $count;

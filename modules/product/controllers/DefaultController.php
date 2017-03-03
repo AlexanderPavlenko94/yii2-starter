@@ -45,24 +45,15 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $formModel =  new SearchForm();
-        $productQuery = clone Product::getProductCategoriesQuery();
-        $categoriesQuery = clone CategorySearch::find();
-        $categoriesObjectsParams = $categoriesQuery->all();
-
-        foreach ($categoriesObjectsParams as $value) {
-            $categoriesTitle[] = $value->id;
-        }
-        $filterParams = $categoriesTitle;
-
+        $searchParams = [];
         if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
             $searchParams = Yii::$app->request->post('SearchForm');
-            //var_dump($searchParams['items']); die;
-            $filterParams = $searchParams['items'];
-            //var_dump($filterParams); die;
-            $productQuery->where(['like', $formModel->search_key ,$formModel->search_value])
-                ->andWhere(['categories.id' => $filterParams]);
         }
 
+        $productQuery = Product::getProductCategoriesQuery($searchParams);
+        $categoriesQuery = CategorySearch::find();
+        $categoriesObjectsParams = CategorySearch::getCategoriesObjectsParams();
+        $filterParams = $categoriesObjectsParams;
         $pagination = new Pagination(['totalCount' =>$productQuery->count(), 'PageSize' => 8]);
         $pagination->pageSizeParam = false;
         $modelsProduct = $productQuery->offset($pagination->offset)
@@ -98,22 +89,17 @@ class DefaultController extends Controller
      */
     public function actionCart($id)
     {
+
         $session = Yii::$app->session;
         if ($session->get('product') === null) {
             $products = [];
-            array_push($products, $this->findModel($id));
-            $session->set('product', $products);
         } else {
             $data = $session->get('product');
-            if (is_array($data)) {
-                $products = $data;
-                array_push($products, $this->findModel($id));
-            }
-            $session->set('product', $products);
+            $products = $data;
         }
+        array_push($products, $this->findModel($id));
+        $session->set('product', $products);
         $order = $session->get('product');
-        //var_dump( $test); die;
-
 
         return $this->render('cart', [
             'model' =>$order,

@@ -2,16 +2,14 @@
 
 namespace app\modules\product\models;
 
-use Yii;
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
+
 
 class CategorySearch extends Category
 {
     /**
      * @inheritdoc
      */
-    public $count = '';
 
     public function rules()
     {
@@ -37,31 +35,14 @@ class CategorySearch extends Category
         return Model::scenarios();
     }
 
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
-     * @return ActiveDataProvider
-     */
-    public function search($params)
+    public static function getCategoriesObjectsParams()
     {
-        $query = Category::find();
+        $categoriesQuery = CategorySearch::find();
+        $categoriesObjectsParams = $categoriesQuery->all();
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => Yii::$app->params['grid']['itemsPrePage'],
-            ],
-        ]);
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+        foreach ($categoriesObjectsParams as $value) {
+            $categoriesTitle[] = $value->id;
         }
-
-        return $dataProvider;
+        return $categoriesTitle;
     }
 }

@@ -99,7 +99,6 @@ class InfoSearch extends Product
             ->andFilterWhere(['like', 'status', $this->status])
             ->andFilterWhere(['like', 'created_at', $this->created_at])
             ->andFilterWhere(['like', 'update_at', $this->update_at])
-
             ->andHaving(['like', 'count_product', $this->count]);
 
         return $dataProvider;
