@@ -90,6 +90,7 @@ class Product extends ActiveRecord
                 ->andWhere(['categories.id' => $filterParams]);
         }
 
+
         return $query;
     }
 

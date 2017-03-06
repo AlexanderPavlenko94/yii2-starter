@@ -39,7 +39,6 @@ class CategorySearch extends Category
     {
         $categoriesQuery = CategorySearch::find();
         $categoriesObjectsParams = $categoriesQuery->all();
-
         foreach ($categoriesObjectsParams as $value) {
             $categoriesTitle[] = $value->id;
         }

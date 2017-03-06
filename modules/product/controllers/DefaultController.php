@@ -44,17 +44,21 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
+
+        $categoriesObjectsParams = CategorySearch::getCategoriesObjectsParams();
+        $filterParams = $categoriesObjectsParams;
+
         $formModel =  new SearchForm();
         $searchParams = [];
         if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
             $searchParams = Yii::$app->request->post('SearchForm');
+            $filterParams = $searchParams['items'];
         }
 
         $productQuery = Product::getProductCategoriesQuery($searchParams);
         $categoriesQuery = CategorySearch::find();
-        $categoriesObjectsParams = CategorySearch::getCategoriesObjectsParams();
-        $filterParams = $categoriesObjectsParams;
-        $pagination = new Pagination(['totalCount' =>$productQuery->count(), 'PageSize' => 8]);
+
+        $pagination = new Pagination(['totalCount' =>$productQuery->count(), 'PageSize' => Yii::$app->params['userView']['productsPrePage']]);
         $pagination->pageSizeParam = false;
         $modelsProduct = $productQuery->offset($pagination->offset)
             ->limit($pagination->limit)
@@ -100,6 +104,8 @@ class DefaultController extends Controller
         array_push($products, $this->findModel($id));
         $session->set('product', $products);
         $order = $session->get('product');
+
+
 
         return $this->render('cart', [
             'model' =>$order,
