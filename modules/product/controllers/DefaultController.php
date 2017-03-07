@@ -8,8 +8,10 @@ use app\modules\product\models\Product;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\Cookie;
 use yii\web\NotFoundHttpException;
 use Yii;
+use yii\web\Response;
 
 /**
  * Class DefaultController
@@ -29,7 +31,7 @@ class DefaultController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['update', 'view', 'index', 'cart',],
+                        'actions' => ['update', 'view', 'index', 'cart', 'add', 'delete'],
                         'roles' => ['@'],
                     ],
                 ]
@@ -65,12 +67,18 @@ class DefaultController extends Controller
             ->all();
         $modelsCategory =$categoriesQuery->all();
 
+        $cookies = Yii::$app->request->cookies;
+        $products = $cookies->getValue('order', []);
+
+        //var_dump($products); die;
+
         return $this->render('index', [
             'formModel' => $formModel,
             'searchModels' => $modelsProduct,
             'pagination' => $pagination,
             'categoriesModels' => $modelsCategory,
             'filterParams' => $filterParams,
+            'products' => $products,
         ]);
     }
 
@@ -88,27 +96,67 @@ class DefaultController extends Controller
 
     /**
      * View an existing userCart with added products.
-     * @param integer $id
      * @return mixed
      */
-    public function actionCart($id)
+
+    public function actionAdd()
+    {
+        $idPost = Yii::$app->request->post('id');
+        $cookies = Yii::$app->request->cookies;
+        $products = $cookies->getValue('order', []);
+        if(in_array($this->findModel($idPost)->id, $products )) {
+            $test = 0;
+        } else {
+            array_push($products, $this->findModel($idPost)->id);
+            $test = 1;
+            Yii::$app->getSession()->setFlash('success', Yii::t('product', 'Product added in your cart.'));
+        }
+
+        $cookies = Yii::$app->response->cookies;
+        $cookies->add(new Cookie([
+            'name' => 'order',
+            'value' => $products,
+        ]));
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $items = ['data' => $test, 'products' =>$products];
+        return $items;
+    }
+
+    public function actionDelete()
+    {
+        $idPost = Yii::$app->request->post('id');
+        $cookies = Yii::$app->request->cookies;
+        $products = $cookies->getValue('order', []);
+        $productsDeleted = array_flip($products);
+        unset($productsDeleted[$idPost]);
+        $products = array_flip($productsDeleted);
+
+        $cookies = Yii::$app->response->cookies;
+        $cookies->add(new Cookie([
+            'name' => 'order',
+            'value' => $products,
+        ]));
+        $query = Product::find();
+        $query->select(['products.id', 'products.title', 'products.description', 'products.picture'])
+            ->from('products')->where([ 'products.id' => $products]);
+        $order = $query->all();
+        return $this->render('cart', [
+            'model' => $order,
+        ]);
+    }
+
+    public function actionCart()
     {
 
-        $session = Yii::$app->session;
-        if ($session->get('product') === null) {
-            $products = [];
-        } else {
-            $data = $session->get('product');
-            $products = $data;
-        }
-        array_push($products, $this->findModel($id));
-        $session->set('product', $products);
-        $order = $session->get('product');
-
-
-
+        $cookies = Yii::$app->request->cookies;
+        $products = $cookies->getValue('order', []);
+        $query = Product::find();
+        $query->select(['products.id', 'products.title', 'products.description', 'products.picture'])
+            ->from('products')->where([ 'products.id' => $products]);
+        $order = $query->all();
         return $this->render('cart', [
-            'model' =>$order,
+            'model' => $order,
         ]);
     }
 

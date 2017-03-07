@@ -14,6 +14,7 @@ use yii\widgets\ActiveForm;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->registerJsFile('@web/js/modules/product/update.js', ['depends' => [AppAsset::className()]]);
+$this->registerJsFile('@web/js/modules/product/showcase.js', ['depends' => [AppAsset::className()]]);
 $this->registerCssFile('@web/css/modules/product/showcase.css', ['depends' => [BootstrapAsset::className()]]);
 ?>
 
@@ -62,8 +63,9 @@ $this->registerCssFile('@web/css/modules/product/showcase.css', ['depends' => [B
                             <div class="caption">
                                 <h3><?= Html::encode("{$value->title}") ?></h3>
                                 <p><?= Html::encode("{$value->description}") ?></p>
-                                <p><?= Html::a(Yii::t('product', 'More'), ['view', 'id' => $value->id], ['class' => 'btn btn-primary more']); ?>
-                                    <?= Html::a(Yii::t('product', 'Buy'), ['cart', 'id' => $value->id], ['class' => 'btn btn-primary buy']); ?></p>
+                                <p><?= Html::a(Yii::t('product', 'More'), ['view', 'id' => $value->id], ['class' => 'btn btn-primary ']); ?>
+                                    <?php $checked =  in_array($value->id, $products) ? ' disabled' : ''; ?>
+                                <?=  Html::button('Buy', ['class' => 'btn btn-primary buy'.$checked, 'data-id' =>$value->id])  ?></p>
                             </div>
                         </div>
                     </div>
