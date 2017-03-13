@@ -5,7 +5,7 @@ namespace app\modules\product\models;
 use Yii;
 use yii\web\Cookie;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
+
 
 /**
  * @property integer $id
@@ -20,49 +20,43 @@ use yii\web\Response;
 class Cart
 {
 
-    public function addInCart()
+    public function addInCart($idPost)
     {
-        $idPost = Yii::$app->request->post('id');
         $cookies = Yii::$app->request->cookies;
         $products = $cookies->getValue('order', []);
-        if(in_array($this->findModel($idPost)->id, $products )) {
-            $test = 0;
+        if(in_array($idPost, $products )) {
+            $checkForAdd = 0;
         } else {
-            array_push($products, $this->findModel($idPost)->id);
-            $test = 1;
-            Yii::$app->getSession()->setFlash('success', Yii::t('product', 'Product added in your cart.'));
+            array_push($products, $idPost);
+            $checkForAdd = 1;
         }
+        Cart::createCookie($products);
 
-        $cookies = Yii::$app->response->cookies;
-        $cookies->add(new Cookie([
-            'name' => 'order',
-            'value' => $products,
-        ]));
+        return $checkForAdd;
 
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $items = ['data' => $test, 'products' =>$products];
-        return $items;
     }
 
-    public function deleteProduct()
+    public function deleteProduct($idPost)
     {
-        $idPost = Yii::$app->request->post('id');
         $cookies = Yii::$app->request->cookies;
         $products = $cookies->getValue('order', []);
         $productsDeleted = array_flip($products);
         unset($productsDeleted[$idPost]);
         $products = array_flip($productsDeleted);
 
+        Cart::createCookie($products);
+        $order = Product::getInfoProductForOrder($products);
+        return $order;
+    }
+
+    public function createCookie($products =[])
+    {
         $cookies = Yii::$app->response->cookies;
         $cookies->add(new Cookie([
             'name' => 'order',
             'value' => $products,
         ]));
-        $query = Product::find();
-        $query->select(['products.id', 'products.title', 'products.description', 'products.picture'])
-            ->from('products')->where([ 'products.id' => $products]);
-        $order = $query->all();
-        return $order;
+        return $cookies;
     }
 
     protected function findModel($id)

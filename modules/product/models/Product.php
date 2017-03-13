@@ -127,6 +127,17 @@ class Product extends ActiveRecord
 
         return null;
     }
+
+    public static function getInfoProductForOrder($products = [])
+    {
+        $query = Product::find();
+        $query->select(['products.id', 'products.title', 'products.description', 'products.picture'])
+            ->from('products')->where([ 'products.id' => $products]);
+        $order = $query->all();
+
+        return $order;
+    }
+
     /**
      * @inheritdoc
      */

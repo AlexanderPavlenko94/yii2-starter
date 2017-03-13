@@ -9,8 +9,9 @@
             success: function (result) {
                 if (result['data'] == 1) {
                     button.attr('disabled', true);
-                    location.reload();
-                    console.log(result['products']);
+                    $('.message-box').replaceWith('<div class="alert alert-success">Product added in your cart.</div>');
+                    $(".alert-success").show('slow');
+                    setTimeout(function() { $(".alert-success").hide('slow'); }, 2000);
                 }
             },
             error: function() {

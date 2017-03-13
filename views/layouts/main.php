@@ -59,6 +59,7 @@ AppAsset::register($this);
                     ['label' => 'Products', 'url' => ['/products']],
                     ['label' => 'Info', 'url' => ['/info']],
                     ['label' => 'Showcase', 'url' => ['/showcase']],
+                    ['label' => 'Cart', 'url' => ['/cart']],
                 ],
             ];
         }
@@ -80,13 +81,13 @@ AppAsset::register($this);
     <?php NavBar::end(); ?>
 
     <div class="container">
-        <?php
+       <div class="message-box "> <?php
         foreach (Yii::$app->session->getAllFlashes() as $key => $message): ?>
-            <div class="flash alert alert-<?= $key; ?>">
+            <div class="flash alert  alert-<?= $key; ?>">
                 <strong><?= ucfirst($key) ?>!</strong> <?= $message ?>
             </div>
         <?php endforeach; ?>
-
+       </div>
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>

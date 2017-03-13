@@ -9,7 +9,6 @@ use app\modules\product\models\Product;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\Cookie;
 use yii\web\NotFoundHttpException;
 use Yii;
 use yii\web\Response;
@@ -100,28 +99,30 @@ class DefaultController extends Controller
 
     public function actionAdd()
     {
+        $idPost = Yii::$app->request->post('id');
         $cookies = new Cart();
-        return $cookies->addInCart();
+        $checkForAdd = $cookies->addInCart($idPost);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $items = ['data' => $checkForAdd];
+        return $items;
+
 
     }
 
     public function actionDelete()
     {
+       $idPost = Yii::$app->request->post('id');
        $cookies = new Cart();
         return $this->render('cart', [
-            'model' => $cookies->deleteProduct(),
+            'model' => $cookies->deleteProduct($idPost),
         ]);
     }
 
     public function actionCart()
     {
-
         $cookies = Yii::$app->request->cookies;
         $products = $cookies->getValue('order', []);
-        $query = Product::find();
-        $query->select(['products.id', 'products.title', 'products.description', 'products.picture'])
-            ->from('products')->where([ 'products.id' => $products]);
-        $order = $query->all();
+        $order = Product::getInfoProductForOrder($products);
         return $this->render('cart', [
             'model' => $order,
         ]);
