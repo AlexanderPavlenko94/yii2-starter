@@ -58,7 +58,6 @@ $config = [
         'db' => require(__DIR__ . '/db.php'),
         'urlManager' => [
             'enablePrettyUrl' => true,
-            //'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => $routes
         ],
