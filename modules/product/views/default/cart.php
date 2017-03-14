@@ -9,7 +9,6 @@ $this->registerCssFile('@web/css/modules/product/view.css');
 $this->registerJsFile('@web/js/modules/product/showcase.js', ['depends' => [AppAsset::className()]]);
 ?>
 <?php foreach ($model as $value): ?>
-    <?php //var_dump($value); die; ?>
 <div class="row">
     <div class="col-sm-1 col-md-2">
         <div class="thumbnail">

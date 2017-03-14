@@ -4,67 +4,71 @@ namespace app\modules\product\models;
 
 use Yii;
 use yii\web\Cookie;
-use yii\web\NotFoundHttpException;
 
 
-/**
- * @property integer $id
- * @property string $title
- * @property string $description
- * @property string $picture
- * @property string $status
- * @property string $created_at
- * @property string $update_at
- * @property string $deleted
- */
 class Cart
 {
-
-    public function addInCart($idPost)
+    /**
+     * Checks for such content in the cart.
+     * @param integer $idPost
+     * @return bool
+     */
+    public function add($idPost)
     {
-        $cookies = Yii::$app->request->cookies;
-        $products = $cookies->getValue('order', []);
-        if(in_array($idPost, $products )) {
-            $checkForAdd = 0;
-        } else {
-            array_push($products, $idPost);
+        $content = Cart::getContentsRepository();
+
+        $checkForAdd = 0;
+        if (!in_array($idPost, $content )) {
+            array_push($content, $idPost);
             $checkForAdd = 1;
         }
-        Cart::createCookie($products);
+        Cart::createRepository($content);
 
         return $checkForAdd;
 
     }
 
-    public function deleteProduct($idPost)
+    /**
+     * Delete content from the repository.
+     * @param integer $idPost
+     * @return mixed
+     */
+    public function delete($idPost)
     {
-        $cookies = Yii::$app->request->cookies;
-        $products = $cookies->getValue('order', []);
-        $productsDeleted = array_flip($products);
-        unset($productsDeleted[$idPost]);
-        $products = array_flip($productsDeleted);
+        $content = Cart::getContentsRepository();
 
-        Cart::createCookie($products);
-        $order = Product::getInfoProductForOrder($products);
+        $contentDeleted = array_flip($content);
+        unset($contentDeleted[$idPost]);
+        $content = array_flip($contentDeleted);
+
+        Cart::createRepository($content);
+        $order = Product::getInfoProductForOrder($content);
         return $order;
     }
 
-    public function createCookie($products =[])
+    /**
+     * Create repository for data storage.
+     * @param array $content
+     * @return mixed
+     */
+    private static function createRepository($content =[])
     {
-        $cookies = Yii::$app->response->cookies;
-        $cookies->add(new Cookie([
+        $repository = Yii::$app->response->cookies;
+        $repository->add(new Cookie([
             'name' => 'order',
-            'value' => $products,
+            'value' => $content,
         ]));
-        return $cookies;
+        return $repository;
     }
 
-    protected function findModel($id)
+    /**
+     * Get content from the repository.
+     *
+     */
+    public static function getContentsRepository()
     {
-        $model = Product::findOne($id);
-        if (null === $model) {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-        return $model;
+        $cookies = Yii::$app->request->cookies;
+        $content = $cookies->getValue('order', []);
+        return $content;
     }
 }

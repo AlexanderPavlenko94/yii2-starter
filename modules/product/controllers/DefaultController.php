@@ -67,16 +67,13 @@ class DefaultController extends Controller
             ->all();
         $modelsCategory =$categoriesQuery->all();
 
-        $cookies = Yii::$app->request->cookies;
-        $products = $cookies->getValue('order', []);
-
         return $this->render('index', [
             'formModel' => $formModel,
             'searchModels' => $modelsProduct,
             'pagination' => $pagination,
             'categoriesModels' => $modelsCategory,
             'filterParams' => $filterParams,
-            'products' => $products,
+            'products' => Cart::getContentsRepository(),
         ]);
     }
 
@@ -93,36 +90,41 @@ class DefaultController extends Controller
     }
 
     /**
-     * View an existing userCart with added products.
+     * Add new content in cart.
      * @return mixed
      */
 
     public function actionAdd()
     {
         $idPost = Yii::$app->request->post('id');
-        $cookies = new Cart();
-        $checkForAdd = $cookies->addInCart($idPost);
+        $repository = new Cart();
+        $checkForAdd = $repository->add($idPost);
         Yii::$app->response->format = Response::FORMAT_JSON;
         $items = ['data' => $checkForAdd];
         return $items;
-
-
     }
 
+    /**
+     * delete selected content.
+     *
+     */
     public function actionDelete()
     {
        $idPost = Yii::$app->request->post('id');
-       $cookies = new Cart();
+        $repository = new Cart();
         return $this->render('cart', [
-            'model' => $cookies->deleteProduct($idPost),
+            'model' => $repository->delete($idPost),
         ]);
     }
 
+    /**
+     * View cart.
+     *
+     */
     public function actionCart()
     {
-        $cookies = Yii::$app->request->cookies;
-        $products = $cookies->getValue('order', []);
-        $order = Product::getInfoProductForOrder($products);
+        $content = Cart::getContentsRepository();
+        $order = Product::getInfoProductForOrder($content);
         return $this->render('cart', [
             'model' => $order,
         ]);

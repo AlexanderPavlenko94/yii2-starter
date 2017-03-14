@@ -9,7 +9,7 @@ return [
     'create' => 'product/swagger/create',
     [
     'pattern' => 'get/<id:\d+>',
-    'route' => 'product/swagger/get',
+    'route' => 'product/swaggerproduct/get',
     'defaults' => ['id' => 1],
     ],
     [

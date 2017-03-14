@@ -23,12 +23,13 @@
     });
 
     $('.delete').bind('click', function () {
+        var button = $(this);
         $.ajax({
             type: 'POST',
             url: 'delete',
             data:  {'id':$(this).attr("data-id")},
             success: function () {
-                    location.reload();
+                button.parent().parent().parent().detach();
             },
             error: function() {
                 alert('Something went wrong. Sorry :\'(');

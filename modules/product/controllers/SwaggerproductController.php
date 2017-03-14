@@ -12,11 +12,11 @@ use Yii;
 use yii\web\Response;
 
 /**
- * Class SwaggerController
+ * Class ProductController for Swagger
  *
  * @package app\modules\product\controllers
  */
-class SwaggerController extends Controller
+class SwaggerProductController extends Controller
 {
     public $modelClass = 'app\modules\product\models\Product';
 

@@ -9,6 +9,7 @@ $routes = \yii\helpers\ArrayHelper::merge(
     require(__DIR__ . '/../modules/feedback/config/routes.php'),
     require(__DIR__ . '/../modules/product/config/routes.php')
 );
+
 $clients = require(__DIR__ . '/clients.php');
 
 $config = [
@@ -29,6 +30,9 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'bLuSJS-EnGQOxVJRARHg9WzzV8RhMeAe',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -54,8 +58,9 @@ $config = [
         'db' => require(__DIR__ . '/db.php'),
         'urlManager' => [
             'enablePrettyUrl' => true,
+            //'enableStrictParsing' => true,
             'showScriptName' => false,
-            'rules' => $routes,
+            'rules' => $routes
         ],
         'i18n' => [
             'translations' => [
