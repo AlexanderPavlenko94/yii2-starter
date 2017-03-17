@@ -10,9 +10,9 @@ modules:
       - Yii2:
             part: [orm, email]
       - Db:
-          dsn: 'mysql:host=localhost;dbname=yii_starter_tests'
+          dsn: 'mysql:host=localhost;dbname=yii_starter'
           user: 'root'
           password: 'root'
-          dump: tests/_data/dump.sql
+          dump: tests/_data/dump1.sql
           populate: true
           cleanup: true
