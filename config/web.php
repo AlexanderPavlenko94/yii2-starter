@@ -11,6 +11,7 @@ $routes = \yii\helpers\ArrayHelper::merge(
 );
 
 $clients = require(__DIR__ . '/clients.php');
+$social = require(__DIR__ . '/social.php');
 
 $config = [
     'id' => 'basic',
@@ -73,6 +74,10 @@ $config = [
         'authClientCollection' => [
             'class' => 'yii\authclient\Collection',
             'clients' => $clients,
+        ],
+        'socialUserInfo' => [
+            'class' => 'app\modules\user\models\SocialLogin',
+            'social' => $social,
         ],
         'formatter' => [
             'dateFormat' => 'd-M-Y',

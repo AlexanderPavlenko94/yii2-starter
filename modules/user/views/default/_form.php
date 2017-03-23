@@ -20,6 +20,7 @@ use yii\widgets\ActiveForm;
             'inputLabel' => 'Choose',
             'modalLabel' => 'Set avatar',
             'noPhotoUrl' => $user->avatar ?: User::DEFAULT_AVATAR_URL,
+            'photoId' => 'user-picture',
         ]) ?>
     </div>
 

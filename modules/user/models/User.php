@@ -186,8 +186,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function create($userData)
     {
-        $this->first_name = $userData->firstName;
-        $this->last_name = $userData->lastName;
+        $this->first_name = $userData->first_name;
+        $this->last_name = $userData->last_name;
         $this->email = $userData->email;
         $this->password = Yii::$app->security->generatePasswordHash($userData->password);
         $this->auth_key = Yii::$app->security->generateRandomString();
@@ -252,14 +252,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function saveSocialAccountInfo($userAttributes)
     {
         if ($this->isNewRecord) {
-            $this->first_name = ArrayHelper::getValue($userAttributes, 'firstName');
-            $this->last_name = ArrayHelper::getValue($userAttributes, 'lastName');
+            $this->first_name = ArrayHelper::getValue($userAttributes, 'first_name');
+            $this->last_name = ArrayHelper::getValue($userAttributes, 'last_name');
             $this->email = ArrayHelper::getValue($userAttributes, 'email');
             $this->avatar = ArrayHelper::getValue($userAttributes, 'avatar');
             $this->status = self::STATUS_ACTIVE;
         }
-        $this->social_id = ArrayHelper::getValue($userAttributes, 'socialId');
-        $this->auth_provider = ArrayHelper::getValue($userAttributes, 'authProvider');
+        $this->social_id = ArrayHelper::getValue($userAttributes, 'id');
+        //$this->auth_provider = ArrayHelper::getValue($userAttributes, 'authProvider');
 
         return $this->save();
     }

@@ -2,7 +2,6 @@
 
 namespace app\modules\product\controllers;
 
-use app\modules\product\models\Cart;
 use app\modules\product\models\CategorySearch;
 use app\modules\product\models\forms\SearchForm;
 use app\modules\product\models\Product;
@@ -46,7 +45,6 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-
         $categoriesObjectsParams = CategorySearch::getCategoriesObjectsParams();
         $filterParams = $categoriesObjectsParams;
 
@@ -66,6 +64,7 @@ class DefaultController extends Controller
             ->limit($pagination->limit)
             ->all();
         $modelsCategory =$categoriesQuery->all();
+        $repository = Yii::$app->params['cart'];
 
         return $this->render('index', [
             'formModel' => $formModel,
@@ -73,7 +72,7 @@ class DefaultController extends Controller
             'pagination' => $pagination,
             'categoriesModels' => $modelsCategory,
             'filterParams' => $filterParams,
-            'products' => Cart::getContentsRepository(),
+            'products' => $repository->getContentsRepository(),
         ]);
     }
 
@@ -97,7 +96,7 @@ class DefaultController extends Controller
     public function actionAdd()
     {
         $idPost = Yii::$app->request->post('id');
-        $repository = new Cart();
+        $repository = Yii::$app->params['cart'];
         $checkForAdd = $repository->add($idPost);
         Yii::$app->response->format = Response::FORMAT_JSON;
         $items = ['data' => $checkForAdd];
@@ -111,7 +110,7 @@ class DefaultController extends Controller
     public function actionDelete()
     {
        $idPost = Yii::$app->request->post('id');
-        $repository = new Cart();
+        $repository = Yii::$app->params['cart'];
         return $this->render('cart', [
             'model' => $repository->delete($idPost),
         ]);
@@ -123,7 +122,8 @@ class DefaultController extends Controller
      */
     public function actionCart()
     {
-        $content = Cart::getContentsRepository();
+        $repository = Yii::$app->params['cart'];
+        $content = $repository->getContentsRepository();
         $order = Product::getInfoProductForOrder($content);
         return $this->render('cart', [
             'model' => $order,

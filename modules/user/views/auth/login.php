@@ -6,8 +6,10 @@
 use yii\bootstrap\BootstrapAsset;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use \app\assets\AppAsset;
 
 $this->registerCssFile('@web/css/modules/user/login.css', ['depends' => [BootstrapAsset::className()]]);
+$this->registerJsFile('@web/js/modules/user/vk.js', ['depends' => [AppAsset::className()]]);
 
 $this->title = Yii::t('user', 'Login');
 $this->params['breadcrumbs'][] = $this->title;
@@ -50,6 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="form-group">
         <div class="col-lg-12">
             <?= Html::submitButton(Yii::t('user', 'Login'), ['class' => 'btn btn-primary', 'name' => 'login-button']); ?>
+            <a class="btn btn-primary" href="https://www.facebook.com/dialog/oauth?client_id=732020446957621&redirect_uri=http://192.168.10.11/facebook&response_type=code&scope=email ">Login Facebook</a>
         </div>
     </div>
 

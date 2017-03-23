@@ -25,9 +25,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-    <?= $form->field($model, 'firstName')->textInput(); ?>
+    <?= $form->field($model, 'first_name')->textInput(); ?>
 
-    <?= $form->field($model, 'lastName')->textInput(); ?>
+    <?= $form->field($model, 'last_name')->textInput(); ?>
 
     <?= $form->field($model, 'email')->textInput(); ?>
 

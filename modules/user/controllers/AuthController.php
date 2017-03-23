@@ -8,6 +8,7 @@ use app\modules\user\models\forms\ChangePasswordForm;
 use app\modules\user\models\forms\LoginForm;
 use app\modules\user\models\forms\RecoveryForm;
 use app\modules\user\models\Hash;
+use app\modules\user\models\SocialLogin;
 use app\modules\user\models\User;
 use BadMethodCallException;
 use Yii;
@@ -20,6 +21,8 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use app\modules\user\models\forms\RegistrationForm;
 use yii\web\ServerErrorHttpException;
+
+
 
 /**
  * AuthController for the `user` module
@@ -34,10 +37,10 @@ class AuthController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['registration', 'login', 'recovery'],
+                'only' => ['registration', 'login', 'recovery', 'vk'],
                 'rules' => [
                     [
-                        'actions' => ['registration', 'login', 'recovery'],
+                        'actions' => ['registration', 'login', 'recovery', 'vk'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -160,6 +163,27 @@ class AuthController extends Controller
         $user->login();
 
         return $this->goHome();
+    }
+
+    /**
+     *Login facebook
+     */
+    public function actionFacebook()
+    {
+        $social = new SocialLogin();
+        $token = $social->getAccessToken();
+        $userInfo = $social->getUserInfo($token);
+        $registrationForm = new RegistrationForm($userInfo);
+        $user = new User();
+        if (!User::findByEmail($userInfo->email)) {
+            if (!$user = $user->saveSocialAccountInfo($registrationForm)) {
+                throw new Exception('User could not be created.');
+            }
+        }
+        $user = User::findByEmail($userInfo->email);
+        $user->login();
+
+        return $this->redirect(Url::home());
     }
 
     /**
